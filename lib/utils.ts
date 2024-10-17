@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx"
 import { twMerge } from "tailwind-merge"
-import type { Interval } from "@/types/yahoo-finance"
+import type { Interval } from "types/yahoo-finance"
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -60,6 +60,7 @@ export function CalculateRange(range: string) {
       currentDate.setDate(currentDate.getDate() - 7)
       break
     case "1m":
+    case "1mo":
       currentDate.setMonth(currentDate.getMonth() - 1)
       break
     case "3m":

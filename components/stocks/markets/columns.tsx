@@ -1,18 +1,28 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import type { Quote } from "@/node_modules/yahoo-finance2/dist/esm/src/modules/quote"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
+import React from "react";
+import { ColumnDef } from "@tanstack/react-table";
+import Quote from "yahoo-finance2";
+import { cn } from "/workspaces/stocks_data/lib/utils";
+import Link from "next/link";
 
-export const columns: ColumnDef<Quote>[] = [
+// Custom type definition for Quote
+interface CustomQuote {
+  shortName: string;
+  symbol: string;
+  regularMarketPrice: number;
+  regularMarketChange: number;
+  regularMarketChangePercent: number;
+}
+
+export const columns: ColumnDef<CustomQuote>[] = [
   {
     accessorKey: "shortName",
-    header: "Title",
+    header: "Market",
     cell: (props) => {
-      const { row } = props
-      const title = row.getValue("shortName") as string
-      const symbol = row.original.symbol
+      const { row } = props;
+      const title = row.getValue("shortName") as string;
+      const symbol = row.original.symbol;
 
       return (
         <Link
@@ -25,24 +35,24 @@ export const columns: ColumnDef<Quote>[] = [
         >
           {title}
         </Link>
-      )
+      );
     },
   },
   {
     accessorKey: "regularMarketPrice",
     header: () => <div className="text-right">Price</div>,
     cell: (props) => {
-      const { row } = props
-      const price = row.getValue("regularMarketPrice") as number
-      return <div className="text-right">{price.toFixed(2)}</div>
+      const { row } = props;
+      const price = row.getValue("regularMarketPrice") as number;
+      return <div className="text-right">{price.toFixed(2)}</div>;
     },
   },
   {
     accessorKey: "regularMarketChange",
     header: () => <div className="text-right">$ Change</div>,
     cell: (props) => {
-      const { row } = props
-      const change = row.getValue("regularMarketChange") as number
+      const { row } = props;
+      const change = row.getValue("regularMarketChange") as number;
       return (
         <div
           className={cn(
@@ -53,15 +63,15 @@ export const columns: ColumnDef<Quote>[] = [
           {change > 0 ? "+" : ""}
           {change.toFixed(2)}
         </div>
-      )
+      );
     },
   },
   {
     accessorKey: "regularMarketChangePercent",
     header: () => <div className="text-right">% Change</div>,
     cell: (props) => {
-      const { row } = props
-      const changePercent = row.getValue("regularMarketChangePercent") as number
+      const { row } = props;
+      const changePercent = row.getValue("regularMarketChangePercent") as number;
       return (
         <div className="flex justify-end">
           <div
@@ -75,7 +85,7 @@ export const columns: ColumnDef<Quote>[] = [
             {changePercent.toFixed(2)}%
           </div>
         </div>
-      )
+      );
     },
   },
-]
+];

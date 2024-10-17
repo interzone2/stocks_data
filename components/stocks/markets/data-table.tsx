@@ -1,80 +1,59 @@
-"use client"
+'use client';
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table"
+import React, { useEffect, useState } from 'react';
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
+interface DataTableProps {
+  columns: any[];
+  data: any[];
 }
 
-export function DataTable<TData, TValue>({
-  columns,
-  data,
-}: DataTableProps<TData, TValue>) {
-  const table = useReactTable({
-    data,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+export const DataTable: React.FC<DataTableProps> = ({ columns, data }) => {
+  const [tableData, setTableData] = useState<any[]>([]);
+
+  useEffect(() => {
+    setTableData(data);
+  }, [data]);
 
   return (
-    <div className="rounded-md">
-      <Table>
-        <TableHeader className="hidden">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
-          ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
+    <div style={{ overflowX: 'auto' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            {columns.map((column, index) => (
+              <th
+                key={index}
+                style={{
+                  borderBottom: '2px solid #ddd',
+                  padding: '8px',
+                  textAlign: 'right', // Ensure alignment matches data cells
+                  backgroundColor: '#333', // Dark background
+                  color: '#fff', // Light text
+                }}
               >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
-              </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
+                {typeof column.header === 'function' ? column.header() : column.header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {tableData.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {columns.map((column, colIndex) => (
+                <td
+                  key={colIndex}
+                  style={{
+                    borderBottom: '1px solid #ddd',
+                    padding: '8px',
+                    textAlign: 'right', // Ensure alignment matches headers
+                  }}
+                >
+                  {typeof row[column.accessorKey] === 'function' ? row[column.accessorKey]() : row[column.accessorKey]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
-  )
-}
+  );
+};

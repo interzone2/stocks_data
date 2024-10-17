@@ -1,6 +1,6 @@
 // @ts-nocheck
 "use client"
-import { memo, useCallback, useMemo, useReducer } from "react"
+import { memo, useCallback, useMemo, useReducer, useEffect } from "react"
 import { scalePoint } from "d3-scale"
 import { bisectRight } from "d3-array"
 
@@ -11,8 +11,8 @@ import { scaleLinear } from "@visx/scale"
 import { ParentSize } from "@visx/responsive"
 import { Button } from "../ui/button"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
-import { DEFAULT_RANGE } from "@/lib/yahoo-finance/constants"
-import { Range } from "@/lib/yahoo-finance/types"
+import { DEFAULT_RANGE } from "../../lib/yahoo-finance/constants"
+import { Range } from "../../lib/yahoo-finance/types"
 
 // UTILS
 const toDate = (d: any) => +new Date(d?.date || d)
@@ -304,9 +304,11 @@ export default function AreaClosedChart({ chartQuotes, range }: any) {
   const isValidRange = (r: string): r is Range =>
     rangeOptions.includes(r as Range)
 
-  if (!isValidRange(range)) {
-    replace(createPageURL(DEFAULT_RANGE))
-  }
+  useEffect(() => {
+    if (!isValidRange(range)) {
+      replace(createPageURL(DEFAULT_RANGE))
+    }
+  }, [range, replace, createPageURL, isValidRange])
 
   const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     const range = e.currentTarget.textContent
